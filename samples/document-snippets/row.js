@@ -14,7 +14,7 @@
  */
 
 const snippets = {
-  createRow: (instanceId, tableId) => {
+  createRow: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -23,18 +23,12 @@ const snippets = {
     // [START bigtable_create_row]
     const row = table.row('samplerow');
 
-    row
-      .create()
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await row
+      .create();      
     // [END bigtable_create_row]
   },
 
-  createRules: (instanceId, tableId) => {
+  createRules: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -65,18 +59,12 @@ const snippets = {
     //   },
     // ];
 
-    row
-      .createRules(rules)
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await row
+      .createRules(rules);      
     // [END bigtable_create_rules]
   },
 
-  deleteAllCells: (instanceId, tableId) => {
+  deleteAllCells: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -84,18 +72,12 @@ const snippets = {
 
     // [START bigtable_delete_all_cells]
     const row = table.row('samplerow');
-    row
-      .delete()
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await row
+      .delete();      
     // [END bigtable_delete_all_cells]
   },
 
-  deleteCells: (instanceId, tableId) => {
+  deleteCells: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -112,18 +94,12 @@ const snippets = {
     // Delete all cells within a family.
     const cells = ['follows'];
 
-    row
-      .deleteCells(cells)
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await row
+      .deleteCells(cells);      
     // [END bigtable_delete_particular_cells]
   },
 
-  exists: (instanceId, tableId) => {
+  exists: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -132,18 +108,12 @@ const snippets = {
     // [START bigtable_row_exists]
     const row = table.row('samplerow');
 
-    row
-      .exists()
-      .then(result => {
-        const exists = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [exists] = await row
+      .exists();      
     // [END bigtable_row_exists]
   },
 
-  filter: (instanceId, tableId) => {
+  filter: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -179,18 +149,12 @@ const snippets = {
       ],
     };
 
-    row
-      .filter(filter, config)
-      .then(result => {
-        const matched = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [matched] = await row
+      .filter(filter, config);
     // [END bigtable_row_filter]
   },
 
-  get: (instanceId, tableId) => {
+  get: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -199,14 +163,8 @@ const snippets = {
     // [START bigtable_get_row]
     const row = table.row('samplerow');
 
-    row
-      .get()
-      .then(result => {
-        const row = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [row] = await row
+      .get();
 
     //-
     // Or pass in an array of column names to populate specific cells.
@@ -227,7 +185,7 @@ const snippets = {
     // [END bigtable_get_row]
   },
 
-  getMetadata: (instanceId, tableId) => {
+  getMetadata: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -236,19 +194,12 @@ const snippets = {
     // [START bigtable_get_row_meta]
     const row = table.row('samplerow');
 
-    row
-      .getMetadata()
-      .then(result => {
-        const metaData = result[0];
-        const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [metaData,apiResponse]= await row
+      .getMetadata();
     // [END bigtable_get_row_meta]
   },
 
-  increment: (instanceId, tableId) => {
+  increment: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -272,19 +223,12 @@ const snippets = {
     //     let value = result[0];
     //     let apiResponse = result[1];
     // });
-    row
-      .increment('follows:gwashington')
-      .then(result => {
-        const value = result[0];
-        const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [value,apiResponse] = await row
+      .increment('follows:gwashington');
     // [END bigtable_row_increment]
   },
 
-  save: (instanceId, tableId) => {
+  save: async (instanceId, tableId) => {
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
@@ -297,14 +241,8 @@ const snippets = {
         jadams: 1,
       },
     };
-    row
-      .save(entry)
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await row
+      .save(entry);
     // [END bigtable_row_save]
   },
 };
