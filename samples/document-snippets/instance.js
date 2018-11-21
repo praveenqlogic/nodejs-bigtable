@@ -46,8 +46,9 @@ const snippets = {
     };
 
     // creates a new Instance
-    const [newInstance,operations,apiResponse] = await instance
-      .create(options);
+    const [newInstance, operation, apiResponse] = await instance.create(
+      options
+    );
     // [END bigtable_create_instance]
   },
 
@@ -66,8 +67,10 @@ const snippets = {
       location: 'us-central1-b',
       storage: 'hdd',
     };
-    const [newCluster,operations,apiResponse] = await instance
-      .createCluster(clusterId, options);
+    const [newCluster, operation, apiResponse] = await instance.createCluster(
+      clusterId,
+      options
+    );
     // [END bigtable_create_cluster]
   },
 
@@ -84,8 +87,9 @@ const snippets = {
       allowTransactionalWrites: true,
       ignoreWarnings: true,
     };
-    const instanceAddProfile = util.promisify(instance.createAppProfile)
-    const appProfile = instanceAddProfile(appProfileId, options);
+    const instanceAddProfile = util.promisify(instance.createAppProfile);
+    const appProfile = await instanceAddProfile(appProfileId, options);
+    return callback(appProfile);
     // [END bigtable_create_app_profile]
   },
 
@@ -119,8 +123,10 @@ const snippets = {
     //   ]
     // };
 
-    const [newTable,apiResponse] = await instance
-      .createTable(tableId, options);
+    const [newTable, apiResponse] = await instance.createTable(
+      tableId,
+      options
+    );
     // [END bigtable_create_table]
   },
 
@@ -130,8 +136,7 @@ const snippets = {
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
 
-    const [exists] = await instance
-      .exists();
+    const [exists] = await instance.exists();
     // [END bigtable_exists_instance]
   },
 
@@ -141,8 +146,7 @@ const snippets = {
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
 
-    const [instance,apiResponse] = await instance
-      .get();
+    const [instanceObj, apiResponse] = await instance.get();
     // [END bigtable_get_instance]
   },
 
@@ -152,8 +156,7 @@ const snippets = {
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
 
-    const [clusters] = await instance
-      .getClusters();
+    const [clusters] = await instance.getClusters();
     // [END bigtable_get_clusters]
   },
 
@@ -163,8 +166,7 @@ const snippets = {
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
 
-    const [appProfiles] = await instance
-      .getAppProfiles();
+    const [appProfiles] = await instance.getAppProfiles();
     // [END bigtable_get_app_profiles]
   },
 
@@ -174,8 +176,7 @@ const snippets = {
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
 
-    const [metaData]= await instance
-      .getMetadata();
+    const [metaData] = await instance.getMetadata();
     // [END bigtable_get_instance_metadata]
   },
 
@@ -194,8 +195,7 @@ const snippets = {
     //   autoPaginate: true
     // };
 
-    const [tables] = await instance
-      .getTables(options);
+    const [tables] = await instance.getTables(options);
     // [END bigtable_get_tables]
   },
 
@@ -209,8 +209,7 @@ const snippets = {
       displayName: 'updated-name',
     };
 
-    const [apiResponse] = await instance
-      .setMetadata(metadata);
+    const [apiResponse] = await instance.setMetadata(metadata);
     // [END bigtable_set_meta_data]
   },
 
@@ -220,8 +219,7 @@ const snippets = {
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
 
-    const [apiResponse] = await instance
-      .delete();
+    const [apiResponse] = await instance.delete();
     // [END bigtable_del_instance]
   },
 };

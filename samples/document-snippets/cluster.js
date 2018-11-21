@@ -21,8 +21,7 @@ const snippets = {
     const instance = bigtable.instance(instanceId);
     const cluster = instance.cluster(clusterId);
 
-    const [clusterResponse,operationResponse,apiResponse] = await cluster
-      .create();
+    const [clusterInstance, operation, apiResponse] = await cluster.create();
     // [END bigtable_create_cluster]
   },
 
@@ -33,8 +32,7 @@ const snippets = {
     const instance = bigtable.instance(instanceId);
     const cluster = instance.cluster(clusterId);
 
-    const [apiResponse] = await cluster
-      .delete();
+    const [apiResponse] = await cluster.delete();
     // [END bigtable_delete_cluster]
   },
 
@@ -45,8 +43,7 @@ const snippets = {
     const instance = bigtable.instance(instanceId);
     const cluster = instance.cluster(clusterId);
 
-    const [exists] = await cluster
-      .exists();
+    const [exists] = await cluster.exists();
     // [END bigtable_exists_cluster]
   },
 
@@ -57,8 +54,7 @@ const snippets = {
     const instance = bigtable.instance(instanceId);
     const cluster = instance.cluster(clusterId);
 
-    const [clusterResponse,apiResponse] = await cluster
-      .get();
+    const [clusterResponse, apiResponse] = await cluster.get();
     // [END bigtable_get_cluster]
   },
 
@@ -69,8 +65,7 @@ const snippets = {
     const instance = bigtable.instance(instanceId);
     const cluster = instance.cluster(clusterId);
 
-    const [metadata,apiResponse] = await cluster
-      .getMetadata();
+    const [metadata, apiResponse] = await cluster.getMetadata();
     // [END bigtable_cluster_get_meta]
   },
 
@@ -85,8 +80,7 @@ const snippets = {
       nodes: 4,
     };
 
-    const [operation,apiResponse] = await cluster
-      .setMetadata(metadata);
+    const [operation, apiResponse] = await cluster.setMetadata(metadata);
     // [END bigtable_cluster_set_meta]
   },
 };

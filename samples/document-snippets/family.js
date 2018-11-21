@@ -22,8 +22,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [familyResponse,apiResponse] = await family
-      .create();
+    const [familyResponse, apiResponse] = await family.create();
     // [END bigtable_create_family]
   },
   existsFamily: async (instanceId, tableId, familyId) => {
@@ -34,8 +33,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [exists] = await family
-      .exists();
+    const [exists] = await family.exists();
     // [END bigtable_exists_family]
   },
   getFamily: async (instanceId, tableId, familyId) => {
@@ -46,8 +44,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [familyResponse,apiResponse] = await family
-      .get();
+    const [familyResponse, apiResponse] = await family.get();
     // [END bigtable_get_family]
   },
   getMetadata: async (instanceId, tableId, familyId) => {
@@ -58,8 +55,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [metaData,apiResponse] = await family
-      .getMetadata();
+    const [metaData, apiResponse] = await family.getMetadata();
     // [END bigtable_get_family_meta]
   },
   setMetadata: async (instanceId, tableId, familyId) => {
@@ -77,8 +73,7 @@ const snippets = {
       },
     };
 
-    const [apiResponse] = await family
-      .setMetadata(metadata);
+    const [apiResponse] = await family.setMetadata(metadata);
     // [END bigtable_set_family_meta]
   },
   delFamily: async (instanceId, tableId, familyId) => {
@@ -89,8 +84,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [apiResponse] = await family
-      .delete();
+    const [apiResponse] = await family.delete();
     // [END bigtable_del_family]
   },
 };

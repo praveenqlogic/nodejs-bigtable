@@ -23,8 +23,7 @@ const snippets = {
     // [START bigtable_create_row]
     const row = table.row('samplerow');
 
-    const [apiResponse] = await row
-      .create();      
+    const [rowObj, apiResponse] = await row.create();
     // [END bigtable_create_row]
   },
 
@@ -59,31 +58,29 @@ const snippets = {
     //   },
     // ];
 
-    const [apiResponse] = await row
-      .createRules(rules);      
+    const [apiResponse] = await row.createRules(rules);
     // [END bigtable_create_rules]
   },
 
   deleteAllCells: async (instanceId, tableId) => {
+    // [START bigtable_delete_all_cells]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_delete_all_cells]
     const row = table.row('samplerow');
-    const [apiResponse] = await row
-      .delete();      
+    const [apiResponse] = await row.delete();
     // [END bigtable_delete_all_cells]
   },
 
   deleteCells: async (instanceId, tableId) => {
+    // [START bigtable_delete_particular_cells]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_delete_particular_cells]
     const row = table.row('samplerow');
 
     // Delete selective cell within a family.
@@ -94,32 +91,30 @@ const snippets = {
     // Delete all cells within a family.
     const cells = ['follows'];
 
-    const [apiResponse] = await row
-      .deleteCells(cells);      
+    const [apiResponse] = await row.deleteCells(cells);
     // [END bigtable_delete_particular_cells]
   },
 
   exists: async (instanceId, tableId) => {
+    // [START bigtable_row_exists]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_row_exists]
     const row = table.row('samplerow');
 
-    const [exists] = await row
-      .exists();      
+    const [exists] = await row.exists();
     // [END bigtable_row_exists]
   },
 
   filter: async (instanceId, tableId) => {
+    // [START bigtable_row_filter]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_row_filter]
     const row = table.row('samplerow');
 
     const filter = [
@@ -149,22 +144,20 @@ const snippets = {
       ],
     };
 
-    const [matched] = await row
-      .filter(filter, config);
+    const [matched] = await row.filter(filter, config);
     // [END bigtable_row_filter]
   },
 
   get: async (instanceId, tableId) => {
+    // [START bigtable_get_row]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_get_row]
     const row = table.row('samplerow');
 
-    const [row] = await row
-      .get();
+    const [rowObj] = await row.get();
 
     //-
     // Or pass in an array of column names to populate specific cells.
@@ -186,26 +179,25 @@ const snippets = {
   },
 
   getMetadata: async (instanceId, tableId) => {
+    // [START bigtable_get_row_meta]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_get_row_meta]
     const row = table.row('samplerow');
 
-    const [metaData,apiResponse]= await row
-      .getMetadata();
+    const [metaData, apiResponse] = await row.getMetadata();
     // [END bigtable_get_row_meta]
   },
 
   increment: async (instanceId, tableId) => {
+    // [START bigtable_row_increment]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_row_increment]
     const row = table.row('samplerow');
 
     // Specify a custom amount to increment the column by.
@@ -223,26 +215,24 @@ const snippets = {
     //     let value = result[0];
     //     let apiResponse = result[1];
     // });
-    const [value,apiResponse] = await row
-      .increment('follows:gwashington');
+    const [value, apiResponse] = await row.increment('follows:gwashington');
     // [END bigtable_row_increment]
   },
 
   save: async (instanceId, tableId) => {
+    // [START bigtable_row_save]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_row_save]
     const row = table.row('samplerow');
     const entry = {
       follows: {
         jadams: 1,
       },
     };
-    const [apiResponse] = await row
-      .save(entry);
+    const [apiResponse] = await row.save(entry);
     // [END bigtable_row_save]
   },
 };
