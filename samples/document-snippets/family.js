@@ -44,7 +44,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [familyResponse, apiResponse] = await family.get();
+    const [familyInstance, apiResponse] = await family.get();
     // [END bigtable_get_family]
   },
   getMetadata: async (instanceId, tableId, familyId) => {
