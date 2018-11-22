@@ -22,7 +22,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    const [familyResponse, apiResponse] = await family.create();
+    const [familyInstance, apiResponse] = await family.create();
     // [END bigtable_create_family]
   },
   existsFamily: async (instanceId, tableId, familyId) => {
@@ -69,7 +69,6 @@ const snippets = {
     const metadata = {
       rule: {
         versions: 2,
-        union: true,
       },
     };
 

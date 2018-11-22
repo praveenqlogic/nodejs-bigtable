@@ -87,8 +87,7 @@ const snippets = {
       allowTransactionalWrites: true,
       ignoreWarnings: true,
     };
-    const instanceAddProfile = util.promisify(instance.createAppProfile);
-    const appProfile = await instanceAddProfile(appProfileId, options);
+    const appProfile = await instance.createAppProfile(appProfileId, options);
     return callback(appProfile);
     // [END bigtable_create_app_profile]
   },

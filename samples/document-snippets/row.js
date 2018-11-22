@@ -15,12 +15,12 @@
 
 const snippets = {
   createRow: async (instanceId, tableId) => {
+    // [START bigtable_create_row]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_create_row]
     const row = table.row('samplerow');
 
     const [rowObj, apiResponse] = await row.create();
