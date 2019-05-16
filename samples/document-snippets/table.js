@@ -13,82 +13,59 @@
  * limitations under the License.
  */
 
-const Bigtable = require('@google-cloud/bigtable');
-const bigtable = new Bigtable();
-
 const snippets = {
-  createTable: (instanceId, tableId) => {
+  createTable: async (instanceId, tableId) => {
+    // [START bigtable_create_table]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
+
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_create_table]
-    table
-      .create()
-      .then(result => {
-        const table = result[0];
-        // let apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [tableResponse, apiResponse] = await table.create();
     // [END bigtable_create_table]
   },
 
-  existsTable: (instanceId, tableId) => {
+  existsTable: async (instanceId, tableId) => {
+    // [START bigtable_exists_table]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_exists_table]
-    table
-      .exists()
-      .then(result => {
-        const exists = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [exists] = await table.exists();
     // [END bigtable_exists_table]
   },
 
-  getTable: (instanceId, tableId) => {
+  getTable: async (instanceId, tableId) => {
+    // [START bigtable_get_table]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_get_table]
-    table
-      .get()
-      .then(result => {
-        const table = result[0];
-        // const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [tableResponse, apiResponse] = await table.get();
     // [END bigtable_get_table]
   },
 
-  getMetadata: (instanceId, tableId) => {
+  getMetadata: async (instanceId, tableId) => {
+    // [START bigtable_get_table_meta]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_get_table_meta]
-    table
-      .getMetadata()
-      .then(result => {
-        const metaData = result[0];
-        // const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [metaData] = await table.getMetadata();
     // [END bigtable_get_table_meta]
   },
 
-  createFamily: (instanceId, tableId, familyId) => {
+  createFamily: async (instanceId, tableId, familyId) => {
+    // [START bigtable_create_family]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_create_family]
     const options = {};
     // options.rule = {
     //   age: {
@@ -99,39 +76,28 @@ const snippets = {
     //   union: true
     // };
 
-    table
-      .createFamily(familyId, options)
-      .then(result => {
-        const family = result[0];
-        // const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [family, apiResponse] = await table.createFamily(familyId, options);
     // [END bigtable_create_table]
   },
 
-  getFamilies: (instanceId, tableId) => {
+  getFamilies: async (instanceId, tableId) => {
+    // [START bigtable_get_families]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_get_families]
-    table
-      .getFamilies()
-      .then(result => {
-        const families = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [families, apiResponse] = await table.getFamilies();
     // [END bigtable_get_families]
   },
 
-  insertRows: (instanceId, tableId) => {
+  insertRows: async (instanceId, tableId) => {
+    // [START bigtable_insert_rows]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_insert_rows]
     const entries = [
       {
         key: 'alincoln',
@@ -143,63 +109,48 @@ const snippets = {
       },
     ];
 
-    table
-      .insert(entries)
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await table.insert(entries);
     // [END bigtable_insert_rows]
   },
 
-  getRows: (instanceId, tableId) => {
+  getRows: async (instanceId, tableId) => {
+    // [START bigtable_get_rows]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_get_rows]
     const options = {
       keys: ['alincoln', 'gwashington'],
     };
-    table
-      .getRows(options)
-      .then(result => {
-        const rows = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [rows] = await table.getRows(options);
     // [END bigtable_get_rows]
   },
 
-  mutate: (instanceId, tableId) => {
+  mutate: async (instanceId, tableId) => {
+    // [START bigtable_mutate_rows]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_mutate_rows]
     const entries = [
       {
         method: 'delete',
         key: 'alincoln',
       },
     ];
-    table
-      .mutate(entries)
-      .then(() => {
-        // handle success
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    await table.mutate(entries);
     // [END bigtable_mutate_rows]
   },
 
   createReadStream: (instanceId, tableId) => {
+    // [START bigtable_table_readstream]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_table_readstream]
     table
       .createReadStream()
       .on('error', err => {
@@ -280,51 +231,36 @@ const snippets = {
     // [END bigtable_table_readstream]
   },
 
-  sampleRowKeys: (instanceId, tableId) => {
+  sampleRowKeys: async (instanceId, tableId) => {
+    // [START bigtable_sample_row_keys]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_sample_row_keys]
-    table
-      .sampleRowKeys()
-      .then(result => {
-        const sampleRKeys = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [sampleRKeys] = await table.sampleRowKeys();
     // [END bigtable_sample_row_keys]
   },
 
-  delRows: (instanceId, tableId) => {
+  delRows: async (instanceId, tableId) => {
+    // [START bigtable_del_rows]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_del_rows]
-    table
-      .deleteRows('alincoln')
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await table.deleteRows('alincoln');
     // [START bigtable_del_rows]
   },
 
-  delTable: (instanceId, tableId) => {
+  delTable: async (instanceId, tableId) => {
+    // [START bigtable_del_table]
+    const Bigtable = require('@google-cloud/bigtable');
+    const bigtable = new Bigtable();
     const instance = bigtable.instance(instanceId);
     const table = instance.table(tableId);
 
-    // [START bigtable_del_table]
-    table
-      .delete()
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await table.delete();
     // [END bigtable_del_table]
   },
 };

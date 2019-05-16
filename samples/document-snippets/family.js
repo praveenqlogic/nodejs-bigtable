@@ -14,7 +14,7 @@
  */
 
 const snippets = {
-  createColmFamily: (instanceId, tableId, familyId) => {
+  createColmFamily: async (instanceId, tableId, familyId) => {
     // [START bigtable_create_family]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
@@ -22,18 +22,10 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    family
-      .create()
-      .then(result => {
-        const family = result[0];
-        // let apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [familyInstance, apiResponse] = await family.create();
     // [END bigtable_create_family]
   },
-  existsFamily: (instanceId, tableId, familyId) => {
+  existsFamily: async (instanceId, tableId, familyId) => {
     // [START bigtable_exists_family]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
@@ -41,17 +33,10 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    family
-      .exists()
-      .then(result => {
-        const exists = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [exists] = await family.exists();
     // [END bigtable_exists_family]
   },
-  getFamily: (instanceId, tableId, familyId) => {
+  getFamily: async (instanceId, tableId, familyId) => {
     // [START bigtable_get_family]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
@@ -59,18 +44,10 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    family
-      .get()
-      .then(result => {
-        const family = result[0];
-        // const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [familyInstance, apiResponse] = await family.get();
     // [END bigtable_get_family]
   },
-  getMetadata: (instanceId, tableId, familyId) => {
+  getMetadata: async (instanceId, tableId, familyId) => {
     // [START bigtable_get_family_meta]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
@@ -78,18 +55,10 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    family
-      .getMetadata()
-      .then(result => {
-        const metaData = result[0];
-        // const apiResponse = result[1];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [metaData, apiResponse] = await family.getMetadata();
     // [END bigtable_get_family_meta]
   },
-  setMetadata: (instanceId, tableId, familyId) => {
+  setMetadata: async (instanceId, tableId, familyId) => {
     // [START bigtable_set_family_meta]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
@@ -100,21 +69,13 @@ const snippets = {
     const metadata = {
       rule: {
         versions: 2,
-        union: true,
       },
     };
 
-    family
-      .setMetadata(metadata)
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await family.setMetadata(metadata);
     // [END bigtable_set_family_meta]
   },
-  delFamily: (instanceId, tableId, familyId) => {
+  delFamily: async (instanceId, tableId, familyId) => {
     // [START bigtable_del_family]
     const Bigtable = require('@google-cloud/bigtable');
     const bigtable = new Bigtable();
@@ -122,14 +83,7 @@ const snippets = {
     const table = instance.table(tableId);
     const family = table.family(familyId);
 
-    family
-      .delete()
-      .then(result => {
-        const apiResponse = result[0];
-      })
-      .catch(err => {
-        // Handle the error.
-      });
+    const [apiResponse] = await family.delete();
     // [END bigtable_del_family]
   },
 };
