@@ -18,9 +18,11 @@ import {promisifyAll} from '@google-cloud/promisify';
 import * as is from 'is';
 import snakeCase = require('lodash.snakecase');
 import {Cluster} from './cluster';
-import {Bigtable} from '.';
+import {Bigtable, AppProfileOptions, CreateAppProfileCallback, CreateAppProfileResponse, DeleteAppProfileOptions, DeleteAppProfileCallback, EmptyResponse, ExistsCallback, ExistsResponse, GetAppProfileCallback, GetAppProfileResponse, GetAppProfileMetadataCallback, GetAppProfileMetadataResponse, Arguments, SetAppProfileMetadataCallback, SetAppProfileMetadataResponse} from '.';
 import {Instance} from './instance';
-
+import {Metadata} from '@google-cloud/common';
+import {google} from '../proto/bigtable';
+import {CallOptions, ServiceError} from 'grpc';
 /**
  * Create an app profile object to interact with your app profile.
  *
@@ -39,7 +41,7 @@ export class AppProfile {
   instance: Instance;
   name: string;
   id: string;
-  metadata;
+  metadata: Metadata;
   constructor(instance: Instance, id: string) {
     this.bigtable = instance.bigtable;
     this.instance = instance;
@@ -52,14 +54,13 @@ export class AppProfile {
       } else {
         throw new Error(`AppProfile id '${id}' is not formatted correctly.
 Please use the format 'my-app-profile' or '${
-          instance.name
-        }/appProfiles/my-app-profile'.`);
+            instance.name}/appProfiles/my-app-profile'.`);
       }
     } else {
       name = `${instance.name}/appProfiles/${id}`;
     }
 
-    this.id = name.split('/').pop();
+    this.id = name.split('/').pop()!;
     this.name = name;
   }
 
@@ -97,8 +98,9 @@ Please use the format 'my-app-profile' or '${
    * //   description: 'My App Profile',
    * // }
    */
-  static formatAppProfile_(options) {
-    const appProfile: any = {};
+  static formatAppProfile_(options: AppProfileOptions):
+      google.bigtable.admin.v2.IAppProfile {
+    const appProfile: google.bigtable.admin.v2.IAppProfile = {};
 
     if (options.routing) {
       if (options.routing === 'any') {
@@ -109,12 +111,11 @@ Please use the format 'my-app-profile' or '${
         };
         if (is.boolean(options.allowTransactionalWrites)) {
           appProfile.singleClusterRouting.allowTransactionalWrites =
-            options.allowTransactionalWrites;
+              options.allowTransactionalWrites;
         }
       } else {
         throw new Error(
-          'An app profile routing policy can only contain "any" or a `Cluster`.'
-        );
+            'An app profile routing policy can only contain "any" or a `Cluster`.');
       }
     }
 
@@ -134,11 +135,17 @@ Please use the format 'my-app-profile' or '${
    * <caption>include:samples/document-snippets/app-profile.js</caption>
    * region_tag:bigtable_create_app_profile
    */
-  create(options, callback) {
-    if (is.fn(options)) {
-      callback = options;
-      options = {};
-    }
+  create(options?: AppProfileOptions): Promise<CreateAppProfileResponse>;
+  create(callback: CreateAppProfileCallback): void;
+  create(options: AppProfileOptions, callback: CreateAppProfileCallback): void;
+  create(
+      optionsOrCallback?: AppProfileOptions|CreateAppProfileCallback,
+      callback?: CreateAppProfileCallback):
+      void|Promise<CreateAppProfileResponse> {
+    const options =
+        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
+    callback =
+        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
     this.instance.createAppProfile(this.id, options, callback);
   }
 
@@ -159,11 +166,17 @@ Please use the format 'my-app-profile' or '${
    * <caption>include:samples/document-snippets/app-profile.js</caption>
    * region_tag:bigtable_delete_app_profile
    */
-  delete(options, callback) {
-    if (is.fn(options)) {
-      callback = options;
-      options = {};
-    }
+  delete(options?: DeleteAppProfileOptions): Promise<EmptyResponse>;
+  delete(callback: DeleteAppProfileCallback): void;
+  delete(options: DeleteAppProfileOptions, callback: DeleteAppProfileCallback):
+      void;
+  delete(
+      optionsOrCallback?: DeleteAppProfileOptions|DeleteAppProfileCallback,
+      callback?: DeleteAppProfileCallback): void|Promise<EmptyResponse> {
+    const options =
+        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
+    callback =
+        typeof optionsOrCallback === 'function' ? optionsOrCallback : callback;
 
     const reqOpts: any = {
       name: this.name,
@@ -174,14 +187,13 @@ Please use the format 'my-app-profile' or '${
     }
 
     this.bigtable.request(
-      {
-        client: 'BigtableInstanceAdminClient',
-        method: 'deleteAppProfile',
-        reqOpts,
-        gaxOpts: options.gaxOptions,
-      },
-      callback
-    );
+        {
+          client: 'BigtableInstanceAdminClient',
+          method: 'deleteAppProfile',
+          reqOpts,
+          gaxOpts: options.gaxOptions,
+        },
+        callback);
   }
 
   /**
@@ -198,24 +210,31 @@ Please use the format 'my-app-profile' or '${
    * <caption>include:samples/document-snippets/app-profile.js</caption>
    * region_tag:bigtable_exists_app_profile
    */
-  exists(gaxOptions, callback) {
-    if (is.fn(gaxOptions)) {
-      callback = gaxOptions;
-      gaxOptions = {};
-    }
+  exists(gaxOptions?: CallOptions): Promise<ExistsResponse>;
+  exists(callback: ExistsCallback): void;
+  exists(gaxOptions: CallOptions, callback: ExistsCallback): void;
+  exists(
+      gaxOptionsOrcallback?: CallOptions|ExistsCallback,
+      callback?: ExistsCallback): void|Promise<ExistsResponse> {
+    const gaxOptions =
+        (typeof gaxOptionsOrcallback === 'object' ? gaxOptionsOrcallback :
+                                                    {}) as CallOptions;
+    callback = typeof gaxOptionsOrcallback === 'function' ?
+        gaxOptionsOrcallback :
+        callback;
 
     this.getMetadata(gaxOptions, err => {
       if (err) {
         if (err.code === 5) {
-          callback(null, false);
+          callback!(null, false);
           return;
         }
 
-        callback(err);
+        callback!(err);
         return;
       }
 
-      callback(null, true);
+      callback!(null, true);
     });
   }
 
@@ -229,14 +248,20 @@ Please use the format 'my-app-profile' or '${
    * <caption>include:samples/document-snippets/app-profile.js</caption>
    * region_tag:bigtable_get_app_profile
    */
-  get(gaxOptions, callback) {
-    if (is.fn(gaxOptions)) {
-      callback = gaxOptions;
-      gaxOptions = {};
-    }
+  get(gaxOptions?: CallOptions): Promise<GetAppProfileResponse>;
+  get(callback: GetAppProfileCallback): void;
+  get(gaxOptions: CallOptions, callback: GetAppProfileCallback): void;
+  get(gaxOptionsOrcallback?: CallOptions|GetAppProfileCallback,
+      callback?: GetAppProfileCallback): void|Promise<GetAppProfileResponse> {
+    const gaxOptions =
+        (typeof gaxOptionsOrcallback === 'object' ? gaxOptionsOrcallback :
+                                                    {}) as CallOptions;
+    callback = typeof gaxOptionsOrcallback === 'function' ?
+        gaxOptionsOrcallback :
+        callback;
 
     this.getMetadata(gaxOptions, (err, metadata) => {
-      callback(err, err ? null : this, metadata);
+      callback!(err, err ? null : this, metadata);
     });
   }
 
@@ -255,29 +280,36 @@ Please use the format 'my-app-profile' or '${
    * <caption>include:samples/document-snippets/app-profile.js</caption>
    * region_tag:bigtable_app_profile_get_meta
    */
-  getMetadata(gaxOptions, callback) {
-    if (is.fn(gaxOptions)) {
-      callback = gaxOptions;
-      gaxOptions = {};
-    }
+  getMetadata(gaxOptions?: CallOptions): Promise<GetAppProfileMetadataResponse>;
+  getMetadata(callback: GetAppProfileMetadataCallback): void;
+  getMetadata(gaxOptions: CallOptions, callback: GetAppProfileMetadataCallback):
+      void;
+  getMetadata(
+      gaxOptionsOrcallback?: CallOptions|GetAppProfileMetadataCallback,
+      callback?: GetAppProfileMetadataCallback):
+      void|Promise<GetAppProfileMetadataResponse> {
+    const gaxOptions =
+        typeof gaxOptionsOrcallback === 'object' ? gaxOptionsOrcallback : {};
+    callback = typeof gaxOptionsOrcallback === 'function' ?
+        gaxOptionsOrcallback :
+        callback;
 
     this.bigtable.request(
-      {
-        client: 'BigtableInstanceAdminClient',
-        method: 'getAppProfile',
-        reqOpts: {
-          name: this.name,
+        {
+          client: 'BigtableInstanceAdminClient',
+          method: 'getAppProfile',
+          reqOpts: {
+            name: this.name,
+          },
+          gaxOpts: gaxOptions,
         },
-        gaxOpts: gaxOptions,
-      },
-      (...args) => {
-        if (args[1]) {
-          this.metadata = args[1];
-        }
+        (...args: Arguments<AppProfile>) => {
+          if (args[1]) {
+            this.metadata = args[1];
+          }
 
-        callback(...args);
-      }
-    );
+          callback!(...args);
+        });
   }
 
   /**
@@ -295,11 +327,24 @@ Please use the format 'my-app-profile' or '${
    * <caption>include:samples/document-snippets/app-profile.js</caption>
    * region_tag:bigtable_app_profile_set_meta
    */
-  setMetadata(metadata, gaxOptions, callback) {
-    if (is.fn(gaxOptions)) {
-      callback = gaxOptions;
-      gaxOptions = {};
-    }
+  setMetadata(metadata: AppProfileOptions, gaxOptions?: CallOptions):
+      Promise<SetAppProfileMetadataResponse>;
+  setMetadata(
+      metadata: AppProfileOptions,
+      callback: SetAppProfileMetadataCallback): void;
+  setMetadata(
+      metadata: AppProfileOptions, gaxOptions: CallOptions,
+      callback: SetAppProfileMetadataCallback): void;
+  setMetadata(
+      metadata: AppProfileOptions,
+      gaxOptionsOrcallback?: CallOptions|SetAppProfileMetadataCallback,
+      callback?: SetAppProfileMetadataCallback):
+      void|Promise<SetAppProfileMetadataResponse> {
+    const gaxOptions =
+        typeof gaxOptionsOrcallback === 'object' ? gaxOptionsOrcallback : {};
+    callback = typeof gaxOptionsOrcallback === 'function' ?
+        gaxOptionsOrcallback :
+        callback;
 
     const reqOpts: any = {
       appProfile: AppProfile.formatAppProfile_(metadata),
@@ -327,14 +372,13 @@ Please use the format 'my-app-profile' or '${
     }
 
     this.bigtable.request(
-      {
-        client: 'BigtableInstanceAdminClient',
-        method: 'updateAppProfile',
-        reqOpts,
-        gaxOpts: gaxOptions,
-      },
-      callback
-    );
+        {
+          client: 'BigtableInstanceAdminClient',
+          method: 'updateAppProfile',
+          reqOpts,
+          gaxOpts: gaxOptions,
+        },
+        callback);
   }
 }
 
